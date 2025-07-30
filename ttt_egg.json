@@ -1,0 +1,113 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-07-28T16:00:00+00:00",
+  "name": "Garry's Mod - Trouble in Terrorist Town",
+  "author": "example@example.com",
+  "description": "Runs a Garry's Mod server configured for the Trouble in Terrorist Town gamemode.",
+  "features": [
+    "steam_disk_space"
+  ],
+  "docker_images": {
+    "ghcr.io/parkervcp/games:source": "ghcr.io/parkervcp/games:source"
+  },
+  "file_denylist": [],
+  "startup": "./srcds_run -game garrysmod -console -usercon -strictportbind -port {{SERVER_PORT}} -ip 0.0.0.0 -maxplayers {{MAX_PLAYERS}} +gamemode {{SRCDS_GAMEMODE}} +map {{SRCDS_MAP}} +sv_setsteamaccount {{STEAM_TOKEN}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": \"gameserver Steam ID \"\r\n}",
+    "logs": "{}",
+    "stop": "quit"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\nset -e\napt -y update\napt -y --no-install-recommends install curl ca-certificates\nmkdir -p /mnt/server/steamcmd\ncurl -sSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \\\n    | tar -xz -C /mnt/server/steamcmd\ncd /mnt/server/steamcmd || exit 1\n./steamcmd.sh +force_install_dir /mnt/server \\\n    +login \"${STEAM_USER}\" \"${STEAM_PASS}\" \"${STEAM_AUTH}\" \\\n    +app_update \"${SRCDS_APPID}\" validate +quit\n\n",
+      "container": "ghcr.io/parkervcp/installers:debian"
+    }
+  },
+  "variables": [
+    {
+      "name": "Steam Username",
+      "description": "Username for SteamCMD. Leave blank for anonymous.",
+      "env_variable": "STEAM_USER",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Steam Password",
+      "description": "Password for SteamCMD.",
+      "env_variable": "STEAM_PASS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Steam Guard Code",
+      "description": "Steam 2FA code if needed.",
+      "env_variable": "STEAM_AUTH",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "App ID",
+      "description": "",
+      "env_variable": "SRCDS_APPID",
+      "default_value": "4020",
+      "user_viewable": false,
+      "user_editable": false,
+      "rules": "required|string|max:20",
+      "field_type": "text"
+    },
+    {
+      "name": "Gamemode",
+      "description": "Default gamemode",
+      "env_variable": "SRCDS_GAMEMODE",
+      "default_value": "terrortown",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Map",
+      "description": "Default map",
+      "env_variable": "SRCDS_MAP",
+      "default_value": "ttt_minecraft_b5",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Max Players",
+      "description": "Maximum number of players",
+      "env_variable": "MAX_PLAYERS",
+      "default_value": "16",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|numeric",
+      "field_type": "text"
+    },
+    {
+      "name": "Steam Game Login Token",
+      "description": "https://steamcommunity.com/dev/managegameservers",
+      "env_variable": "STEAM_TOKEN",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    }
+  ]
+}
